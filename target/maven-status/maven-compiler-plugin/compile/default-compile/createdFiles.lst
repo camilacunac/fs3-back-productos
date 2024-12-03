@@ -1,0 +1,9 @@
+com\example\controller\ProductoController.class
+com\example\service\ProductoServiceImpl.class
+com\example\model\Response.class
+com\example\repository\ProductoRepository.class
+com\example\App.class
+com\example\config\GlobalExceptionHandler.class
+com\example\model\Producto.class
+com\example\service\ProductoService.class
+com\example\config\ValidationConfig.class

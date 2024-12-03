@@ -1,10 +1,13 @@
 package com.example.controller;
 
-import com.example.model.DetalleCompra;
 import com.example.model.Producto;
 import com.example.model.Response;
 import com.example.service.ProductoService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,35 +26,48 @@ public class ProductoController {
         return productoService.getAllProductos();
     }
 
-    // Obtener producto por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getProductoById(@PathVariable Long id) throws Exception {
-        return productoService.getProductoById(id);
+    public ResponseEntity<Response> getProductoById(@PathVariable Long id) {
+        try {
+            return productoService.getProductoById(id);
+        } catch (Exception e) {
+            return errorResponse(e);
+        }
     }
 
     // Crear un nuevo producto
     @PostMapping
-    public ResponseEntity<Response> createProducto(@RequestBody Producto producto) {
-        return productoService.createProducto(producto);
+    public ResponseEntity<Response> createProducto(@RequestBody @Valid Producto producto) throws Exception {
+        try {
+            return productoService.createProducto(producto);
+        } catch (Exception e) {
+            return errorResponse(e);
+        }
     }
 
     // Actualizar un producto por ID
     @PutMapping("/{id}")
-    public ResponseEntity<Response> updateProducto(@PathVariable Long id, @RequestBody Producto producto)
+    public ResponseEntity<Response> updateProducto(@PathVariable Long id, @RequestBody @Valid Producto producto)
             throws Exception {
-        return productoService.updateProducto(id, producto);
+        try {
+            return productoService.updateProducto(id, producto);
+        } catch (Exception e) {
+            return errorResponse(e);
+        }
     }
 
-    // Eliminar un producto por ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Response> deleteProducto(@PathVariable Long id) throws Exception {
-        return productoService.deleteProducto(id);
+    public ResponseEntity<Response> deleteProducto(@PathVariable Long id) {
+        try {
+            return productoService.deleteProducto(id);
+        } catch (Exception e) {
+            return errorResponse(e);
+        }
     }
 
-    @PostMapping("/compra")
-    public ResponseEntity<Response> realizarCompra(
-            @RequestParam Long idUsuario,
-            @RequestBody List<DetalleCompra> detallesCompra) {
-        return productoService.realizarCompra(idUsuario, detallesCompra);
+    private ResponseEntity<Response> errorResponse(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new Response("error", null, e.getMessage()));
     }
+
 }

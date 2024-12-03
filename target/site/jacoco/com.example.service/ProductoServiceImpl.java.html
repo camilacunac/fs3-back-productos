@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductoServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">productos</a> &gt; <a href="index.source.html" class="el_package">com.example.service</a> &gt; <span class="el_source">ProductoServiceImpl.java</span></div><h1>ProductoServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.service;
+
+import com.example.model.Producto;
+import com.example.model.Response;
+import com.example.repository.ProductoRepository;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+@Service
+<span class="fc" id="L21">public class ProductoServiceImpl implements ProductoService {</span>
+
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    @Autowired
+    private Validator validator;
+
+    // Obtener todos los productos
+    @Override
+    public List&lt;Producto&gt; getAllProductos() {
+<span class="fc" id="L32">        return productoRepository.findAll();</span>
+    }
+
+    // Obtener producto por ID
+    @Override
+    public ResponseEntity&lt;Response&gt; getProductoById(Long idProducto) {
+        Response response;
+        try {
+<span class="fc" id="L40">            Optional&lt;Producto&gt; productoOpt = productoRepository.findById(idProducto);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            if (!productoOpt.isPresent()) {</span>
+<span class="fc" id="L42">                response = new Response(&quot;error&quot;, null, &quot;Producto no encontrado&quot;);</span>
+<span class="fc" id="L43">                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);</span>
+            }
+<span class="fc" id="L45">            response = new Response(&quot;success&quot;, productoOpt.get(), &quot;&quot;);</span>
+<span class="fc" id="L46">            return ResponseEntity.status(HttpStatus.OK).body(response);</span>
+<span class="fc" id="L47">        } catch (Exception e) {</span>
+<span class="fc" id="L48">            response = new Response(&quot;error&quot;, null, e.getMessage());</span>
+<span class="fc" id="L49">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);</span>
+        }
+    }
+
+    // Crear un nuevo producto
+    @Override
+    public ResponseEntity&lt;Response&gt; createProducto(Producto producto) {
+        Response response;
+        try {
+<span class="fc" id="L58">            Set&lt;ConstraintViolation&lt;Producto&gt;&gt; violations = validator.validate(producto);</span>
+
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (!violations.isEmpty()) {</span>
+<span class="fc" id="L61">                StringBuilder errorMessages = new StringBuilder();</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                for (ConstraintViolation&lt;Producto&gt; violation : violations) {</span>
+<span class="fc" id="L63">                    errorMessages.append(violation.getPropertyPath())</span>
+<span class="fc" id="L64">                            .append(&quot;: &quot;)</span>
+<span class="fc" id="L65">                            .append(violation.getMessage())</span>
+<span class="fc" id="L66">                            .append(&quot;; &quot;);</span>
+<span class="fc" id="L67">                }</span>
+<span class="fc" id="L68">                response = new Response(&quot;error&quot;, null, errorMessages.toString());</span>
+<span class="fc" id="L69">                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);</span>
+            }
+<span class="fc" id="L71">            producto.setFechaCreacion(LocalDate.now());</span>
+<span class="fc" id="L72">            Producto nuevoProducto = productoRepository.save(producto);</span>
+<span class="fc" id="L73">            response = new Response(&quot;success&quot;, nuevoProducto, &quot;&quot;);</span>
+<span class="fc" id="L74">            return ResponseEntity.status(HttpStatus.OK).body(response);</span>
+<span class="fc" id="L75">        } catch (Exception e) {</span>
+<span class="fc" id="L76">            response = new Response(&quot;error&quot;, null, e.getMessage());</span>
+<span class="fc" id="L77">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);</span>
+        }
+    }
+
+    // Actualizar un producto existente
+    @Override
+    public ResponseEntity&lt;Response&gt; updateProducto(Long idProducto, Producto productoActualizado) {
+        Response response;
+        try {
+<span class="fc" id="L86">            Optional&lt;Producto&gt; productoOpt = productoRepository.findById(idProducto);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if (!productoOpt.isPresent()) {</span>
+<span class="fc" id="L88">                response = new Response(&quot;error&quot;, null, &quot;Producto no encontrado&quot;);</span>
+<span class="fc" id="L89">                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);</span>
+            }
+
+<span class="fc" id="L92">            Set&lt;ConstraintViolation&lt;Producto&gt;&gt; violations = validator.validate(productoActualizado);</span>
+
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">            if (!violations.isEmpty()) {</span>
+<span class="nc" id="L95">                StringBuilder errorMessages = new StringBuilder();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                for (ConstraintViolation&lt;Producto&gt; violation : violations) {</span>
+<span class="nc" id="L97">                    errorMessages.append(violation.getPropertyPath())</span>
+<span class="nc" id="L98">                            .append(&quot;: &quot;)</span>
+<span class="nc" id="L99">                            .append(violation.getMessage())</span>
+<span class="nc" id="L100">                            .append(&quot;; &quot;);</span>
+<span class="nc" id="L101">                }</span>
+<span class="nc" id="L102">                response = new Response(&quot;error&quot;, null, errorMessages.toString());</span>
+<span class="nc" id="L103">                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);</span>
+            }
+
+<span class="fc" id="L106">            Producto productoExistente = productoOpt.get();</span>
+            // Actualizar los campos del producto
+<span class="fc" id="L108">            productoExistente.setNombre(productoActualizado.getNombre());</span>
+<span class="fc" id="L109">            productoExistente.setDescripcion(productoActualizado.getDescripcion());</span>
+<span class="fc" id="L110">            productoExistente.setPrecio(productoActualizado.getPrecio());</span>
+<span class="fc" id="L111">            productoExistente.setStock(productoActualizado.getStock());</span>
+<span class="fc" id="L112">            productoExistente.setCategoria(productoActualizado.getCategoria());</span>
+<span class="fc" id="L113">            productoExistente.setEstado(productoActualizado.getEstado());</span>
+<span class="fc" id="L114">            productoExistente.setFechaModificacion(LocalDate.now());</span>
+
+<span class="fc" id="L116">            Producto productoActualizadoResult = productoRepository.save(productoExistente);</span>
+<span class="fc" id="L117">            response = new Response(&quot;success&quot;, productoActualizadoResult, &quot;&quot;);</span>
+<span class="fc" id="L118">            return ResponseEntity.status(HttpStatus.OK).body(response);</span>
+<span class="fc" id="L119">        } catch (Exception e) {</span>
+<span class="fc" id="L120">            response = new Response(&quot;error&quot;, null, e.getMessage());</span>
+<span class="fc" id="L121">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);</span>
+        }
+    }
+
+    // Eliminar un producto por ID
+    @Override
+    public ResponseEntity&lt;Response&gt; deleteProducto(Long idProducto) {
+        Response response;
+        try {
+<span class="fc" id="L130">            Optional&lt;Producto&gt; productoOpt = productoRepository.findById(idProducto);</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (!productoOpt.isPresent()) {</span>
+<span class="fc" id="L132">                response = new Response(&quot;error&quot;, null, &quot;Producto no encontrado&quot;);</span>
+<span class="fc" id="L133">                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);</span>
+            }
+
+<span class="fc" id="L136">            productoRepository.deleteById(idProducto);</span>
+<span class="fc" id="L137">            response = new Response(&quot;success&quot;, &quot;Producto eliminado con éxito&quot;, &quot;&quot;);</span>
+<span class="fc" id="L138">            return ResponseEntity.status(HttpStatus.OK).body(response);</span>
+<span class="fc" id="L139">        } catch (Exception e) {</span>
+<span class="fc" id="L140">            response = new Response(&quot;error&quot;, null, e.getMessage());</span>
+<span class="fc" id="L141">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,3 @@
+com\example\AppTest.class
+com\example\service\ProductoServiceImplTest.class
+com\example\controller\ProductoControllerTest.class

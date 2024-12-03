@@ -1,0 +1,8 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+productos,com.example.model,Response,12,21,0,0,6,8,3,4,3,4
+productos,com.example.model,Producto,4,96,0,0,2,40,1,21,1,21
+productos,com.example,App,5,3,0,0,2,1,1,1,1,1
+productos,com.example.controller,ProductoController,11,48,0,0,3,13,0,7,0,7
+productos,com.example.service,ProductoServiceImpl,40,282,3,11,9,59,2,11,0,6
+productos,com.example.config,ValidationConfig,0,8,0,0,0,3,0,2,0,2
+productos,com.example.config,GlobalExceptionHandler,30,3,2,0,5,1,2,1,1,1

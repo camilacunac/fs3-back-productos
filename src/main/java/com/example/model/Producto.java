@@ -1,6 +1,12 @@
 package com.example.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 @Entity
@@ -13,27 +19,38 @@ public class Producto {
     private Long idProducto;
 
     @Column(name = "nombre", nullable = false)
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Size(max = 100, message = "El nombre no puede tener más de 100 caracteres")
     private String nombre;
 
     @Column(name = "descripcion", nullable = false, length = 1000)
+    @NotBlank(message = "La descripción no puede estar vacía")
+    @Size(max = 1000, message = "La descripción no puede tener más de 1000 caracteres")
     private String descripcion;
 
     @Column(name = "precio", nullable = false)
+    @NotNull(message = "El precio no puede ser nulo")
+    @Positive(message = "El precio debe ser un valor positivo")
     private Double precio;
 
     @Column(name = "stock", nullable = false)
+    @NotNull(message = "El stock no puede ser nulo")
+    @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
 
     @Column(name = "categoria", nullable = false)
+    @NotBlank(message = "La categoría no puede estar vacía")
+    @Size(max = 100, message = "La categoría no puede tener más de 100 caracteres")
     private String categoria;
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDate fechaCreacion;
 
-    @Column(name = "fecha_modificacion", nullable = true)
+    @Column(name = "fecha_modificacion")
     private LocalDate fechaModificacion;
 
     @Column(name = "estado", nullable = false)
+    @NotBlank(message = "El estado no puede estar vacío")
     private String estado;
 
     @Column(name = "imagen_url", length = 200)
